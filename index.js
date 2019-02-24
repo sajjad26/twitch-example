@@ -16,7 +16,7 @@ const {
 } = require('./repos/users');
 const database = require('./database');
 
-const port = 4000;
+const port = process.env.PORT || 4000;
 const app = express();
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false }));
