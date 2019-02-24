@@ -1,0 +1,81 @@
+<% include ./layout/header %>
+<div class="container">
+  <div class="mt-4">
+    <h3>Stream Page</h3>
+    <% if (!user) { %>
+      <div class="alert alert-primary">You have not added your favourite streamer Yet. Click <a href="/add-streamer">here</a> to add now</div>
+    <% } else {  %>
+      <div class="row">
+        <div class="col">
+          <!--<iframe 
+          src="https://player.twitch.tv/?channel=<%= user.streamer %>&autoplay=false" 
+          frameborder="0" 
+          allowfullscreen="true" 
+          scrolling="no"
+          height="378" 
+          width="620"></iframe>-->
+          <div class="channel-events">
+            <div class="channel-event">
+              I will show one channel event
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          I will show chat for this channel
+        </div>
+      </div>
+    <% } %>
+  </div>
+</div>
+<% include ./layout/scripts %>
+<script>
+  $(document).ready(function(){
+    var socket = new WebSocket('wss://pubsub-edge.twitch.tv');
+    socket.onopen = function(){
+      console.log('socket openend', event.type);
+      var data = {
+        type: 'LISTEN',
+        data: {
+          "topics": ['channel-bits-events-v1.<%= user.streamer_id %>'],
+          // "auth_token": "d4qi57gvjw19uaw8zeilqkrkursr36"
+          // "nonce": "44h1k13746815ab1r2",
+          "auth_token": "<%= access_token %>"
+        }
+      };
+      socket.send(JSON.stringify(data));
+    };
+    socket.onmessage = function(event){
+      console.log(event);
+    }
+  });
+  // $(document).ready(function(){
+  //   var socket = new WebSocket('wss://pubsub-edge.twitch.tv');
+  //   socket.onopen = function (event) {
+  //     console.log('socket openend', event.type);
+  //     var data = {
+  //       type: 'LISTEN',
+  //       data: {
+  //         "topics": ['channel-bits-events-v1.<%= user.streamer_id %>'],
+  //         "auth_token": <%= user.auth_token %>
+  //       }
+  //     };
+  //     console.log(data);
+  //     socket.send(JSON.stringify(data));
+  //     // setInterval(() => {
+  //     //   socket.send(JSON.stringify({
+  //     //     type: 'PING'
+  //     //   }));
+  //     // }, 1000 * 5);
+  //   };
+  //   // socket.onerror = function (error) {
+  //   //   console.log('error on socket', error);
+  //   // };
+  //   // socket.onmessage = function (event) {
+  //   //   console.log('message on socket', event.type, event.data);
+  //   // };
+  //   // socket.onclose = function () {
+  //   //   console.log('close socket');
+  //   // };
+  // });
+</script>
+<% include ./layout/footer %>

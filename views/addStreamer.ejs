@@ -1,0 +1,17 @@
+<% include ./layout/header %>
+<div class="container">
+  <div class="row justify-content-md-center mt-4">
+    <div class="col col-lg-6">
+      <h3>Add Streamer</h3>
+      <form class="mt-2" method="post" action="/stream" id="addStreamerForm">
+        <div class="form-group">
+          <label for="streamer">Streamer</label>
+          <input type="text" class="form-control" id="streamer" name="streamer" placeholder="Enter streamer username">
+          <small id="streamerHelp" class="form-text text-muted">Type the username of your favourite streamer</small>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+    </div>
+</div>
+<% include ./layout/scripts %>
+<% include ./layout/footer %>
