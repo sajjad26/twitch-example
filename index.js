@@ -31,6 +31,7 @@ app.get('/', async (req, res) => {
     user: null,
     users: users,
     moment: moment,
+    redirectUrl: config.redirect_uri,
     loggedIn: isLoggedIn(req)
   };
   return res.render('index', data);
