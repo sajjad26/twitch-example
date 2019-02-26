@@ -11,18 +11,17 @@ module.exports.loginTwitchUser = async (code) => {
     });
     if(!dbUser){
       dbUser = await User.create({
+        access_token: data.access_token,
         _id: user._id,
         email: user.email,
         name: user.display_name,
-        access_token: data.access_token,
-        logo: data.logo
+        logo: user.logo
       });
     }else{
       dbUser.access_token = data.access_token;
       dbUser.email = user.email;
       dbUser.name = user.display_name;
       dbUser.logo = user.logo;
-      console.log(data);
       await dbUser.save();
     }
     return dbUser;
