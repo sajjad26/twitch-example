@@ -1,7 +1,7 @@
 <% include ./layout/header %>
 <div class="container">
 <div class="jumbotron mt-4 text-center">
-  <a class="btn btn-primary btn-lg" href="https://id.twitch.tv/oauth2/authorize?client_id=i7rgaquwvcg9e9a5scx2ymkttlrzs4&redirect_uri=<%= redirectUrl %>&response_type=code&scope=user_read+channel_subscriptions+bits:read+chat:read+channel_subscriptions">
+  <a class="btn btn-primary btn-lg" href="https://id.twitch.tv/oauth2/authorize?client_id=<%= clientId %>&redirect_uri=<%= redirectUrl %>&response_type=code&scope=user_read+channel_subscriptions+bits:read+chat:read+channel_subscriptions">
     Login With Twitch
   </a>
 </div>
