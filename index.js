@@ -130,7 +130,7 @@ app.get('/api/webhooks/user-followed-channel', function (req, res) {
 
 app.post('/api/webhooks/user-followed-channel', function(req, res){
   res.sendStatus(202);
-  console.log('got a webhook', req.body);
+  console.log('got a webhook', req.body, req.query);
 });
 
 
