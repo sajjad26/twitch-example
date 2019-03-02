@@ -155,7 +155,7 @@ module.exports.subscribeToChannelWebHooks = async (streamer) => {
     });
     return res.data;
   } catch (err) {
-    console.log(err.toString(), err.response.data, data, headers);
+    console.log(err.toString(), err.response.data, params, headers);
   }
 };
 
