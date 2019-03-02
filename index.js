@@ -61,8 +61,8 @@ app.get('/stream', checkUserMiddleware, async (req, res) => {
   if(!user.streamer){
     return res.redirect('/add-streamer');
   }
-  const channelPosts = await getChannelPosts(req, user.streamer_id);
-  console.log(channelPosts);
+  // const channelPosts = await getChannelPosts(req, user.streamer_id);
+  // console.log(channelPosts);
   /** WebSocket */
   // let socket = sockets[user.id];
   // if(!socket){
@@ -89,7 +89,7 @@ app.get('/stream', checkUserMiddleware, async (req, res) => {
   // }
   return res.render(`stream`, {
     user: user,
-    channelPosts: channelPosts,
+    // channelPosts: channelPosts,
     access_token: res.locals.access_token
   });
 });

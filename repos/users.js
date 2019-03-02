@@ -120,11 +120,10 @@ module.exports.getChannelPosts = async (req, channelId) => {
     limit: 10
   };
   const headers = {
-    "Authorization": `OAuth ${this.getAccessToken(req)}`,
+    "Authorization": `Bearer ${config.app_token}`,
     "Client-ID": config.client_id,
     "Accept": "application/vnd.twitchtv.v5+json"
   };
-  console.log(url, params, headers);
   try{
     const res = await axios.get(url, {
       params: params,
@@ -132,15 +131,14 @@ module.exports.getChannelPosts = async (req, channelId) => {
     });
     return res.data;
   }catch(err){
-    console.log(err.toString());
-    return [];
+    console.log(err.toString(), err.response.data);
   }
 };
 
 module.exports.subscribeToChannelWebHooks = async (streamer) => {
   const url = `https://api.twitch.tv/helix/webhooks/hub`; 
   const params = {
-    "hub.callback": `${config.baseUrl}/api/webhooks/user-followed-channel`,
+    "hub.callback": `${config.base_url}/api/webhooks/user-followed-channel`,
     "hub.mode": "subscribe",
     "hub.topic": `https://api.twitch.tv/helix/users/follows?first=1&to_id=${streamer.id}`,
     "hub.lease_seconds": "864000"
@@ -149,7 +147,7 @@ module.exports.subscribeToChannelWebHooks = async (streamer) => {
     "Authorization": `Bearer ${config.app_token}`,
     "Client-ID": config.client_id
   };
-  console.log(url, params, headers);
+  console.log('subscribe wehook');
   try {
     const res = await axios.get(url, {
       params: params,
@@ -157,15 +155,14 @@ module.exports.subscribeToChannelWebHooks = async (streamer) => {
     });
     return res.data;
   } catch (err) {
-    console.log(err.toString());
-    return [];
+    console.log(err.toString(), err.response.data);
   }
 };
 
 module.exports.unsubscribeUserFollowedWebHook = async (streamerId) => {
   const url = `https://api.twitch.tv/helix/webhooks/hub`;
   const params = {
-    "hub.callback": `${config.baseUrl}/api/webhooks/user-followed-channel`,
+    "hub.callback": `${config.base_url}/api/webhooks/user-followed-channel`,
     "hub.mode": "unsubscribe",
     "hub.topic": `https://api.twitch.tv/helix/users/follows?first=1&to_id=${streamerId}`,
     "hub.lease_seconds": "864000"
@@ -174,7 +171,7 @@ module.exports.unsubscribeUserFollowedWebHook = async (streamerId) => {
     "Authorization": `Bearer ${config.app_token}`,
     "Client-ID": config.client_id
   };
-  console.log(url, params, headers);
+  console.log('unsubscribe webhook');
   try {
     const res = await axios.get(url, {
       params: params,
@@ -182,8 +179,7 @@ module.exports.unsubscribeUserFollowedWebHook = async (streamerId) => {
     });
     return res.data;
   } catch (err) {
-    console.log(err.toString());
-    return [];
+    console.log(err.toString(), err.response.data);
   }
 };
 
