@@ -52,9 +52,8 @@
       room: room
     });
     onReceiveEvent(socket, 'userFollowed', function(data){
-      console.log(data);
-      $('.channel-events events').prepend('<div class="event"><a href="https://www.twitch.tv/'+ data.data.from_name +'">' + data.data.from_name + '</a> Followed <a href="https://www.twitch.tv/'+ data.data.to_name +'">' + data.data.to_name + '</a></div>');
-      $('.channel-events .event:gt(9)').remove();
+      $('.channel-events .events').prepend('<div class="event"><a href="https://www.twitch.tv/'+ data.data.from_name +'">' + data.data.from_name + '</a> Followed <a href="https://www.twitch.tv/'+ data.data.to_name +'">' + data.data.to_name + '</a></div>');
+      $('.events .event:gt(9)').remove();
     }, room);
   });
 </script>
