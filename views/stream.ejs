@@ -15,10 +15,8 @@
           height="378" 
           width="620"></iframe>-->
           <div class="channel-events">
-            <div class="channel-event">
-              <h3>Channel Events</h3>
-              <div class="events">
-              </div>
+            <h3>Channel Events</h3>
+            <div class="events">
             </div>
           </div>
         </div>
@@ -55,7 +53,7 @@
     });
     onReceiveEvent(socket, 'userFollowed', function(data){
       console.log(data);
-      $('.channel-events').append('<div class="event"><a href="https://www.twitch.tv/'+ data.data.from_name +'">' + data.data.from_name + '</a> Followed <a href="https://www.twitch.tv/'+ data.data.to_name +'">' + data.data.to_name + '</a></div>');
+      $('.channel-events events').prepend('<div class="event"><a href="https://www.twitch.tv/'+ data.data.from_name +'">' + data.data.from_name + '</a> Followed <a href="https://www.twitch.tv/'+ data.data.to_name +'">' + data.data.to_name + '</a></div>');
       $('.channel-events .event:gt(9)').remove();
     }, room);
   });
