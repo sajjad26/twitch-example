@@ -2,7 +2,12 @@ const express = require('express');
 const moment = require('moment');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
-const WebSocket = require('ws');
+const app = express();
+const http = require('http').Server(app);
+const io = require('socket.io')(http, {
+  path: '/socket.io',
+  serveClient: true,
+});
 const config = require('./config');
 const { 
   loginTwitchUser, 
@@ -20,12 +25,11 @@ const {
 const database = require('./database');
 
 const port = process.env.PORT || 4000;
-const app = express();
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.set('view engine', 'ejs');
-app.use('/static', express.static(__dirname + '/static'));
+app.use(express.static(__dirname + '/static'));
 
 // const sockets = [];
 
@@ -61,35 +65,8 @@ app.get('/stream', checkUserMiddleware, async (req, res) => {
   if(!user.streamer){
     return res.redirect('/add-streamer');
   }
-  // const channelPosts = await getChannelPosts(req, user.streamer_id);
-  // console.log(channelPosts);
-  /** WebSocket */
-  // let socket = sockets[user.id];
-  // if(!socket){
-  //   console.log('new socket');
-  //   socket = new WebSocket('wss://pubsub-edge.twitch.tv');
-  //   sockets[user.id] = socket;
-  //   socket.onopen = function (event) {
-  //     console.log('socket openend', event.type);
-  //     setInterval(() => {
-  //       socket.send(JSON.stringify({
-  //         type: 'PING'
-  //       }));
-  //     }, 1000 * 5);
-  //   };
-  //   socket.onerror = function (error) {
-  //     console.log('error on socket', error);
-  //   };
-  //   socket.onmessage = function (event) {
-  //     console.log('message on socket', event.type, event.data);
-  //   };
-  //   socket.onclose = function () {
-  //     console.log('close socket');
-  //   };
-  // }
   return res.render(`stream`, {
     user: user,
-    // channelPosts: channelPosts,
     access_token: res.locals.access_token
   });
 });
@@ -133,8 +110,8 @@ app.post('/add-streamer', checkUserMiddleware, async (req, res) => {
 
 /** Web Hooks Verify */
 app.get('/api/webhooks/user-followed-channel', function (req, res) {
-  console.log('in user followd api');
-  console.log(req.query);
+  // console.log('in user followd api');
+  // console.log(req.query);
   // res.sendStatus(202);
   return res.send(req.query['hub.challenge']);
 });
@@ -145,13 +122,30 @@ app.post('/api/webhooks/user-followed-channel', function(req, res){
   if(notif){
     // then do something with it
     console.log(notif);
+    // emit this to clients subscribed
+    const room = `channels/${notif.to_id}`;
+    io.broadcast.to(room).emit('userFollowed', {
+      data: notif
+    });
   } 
 });
 
 
 database.sync().then(() => {
   generateTwitchAppToken().then((token) => {
-    app.listen(port, () => console.log(`Server is listening on ${port}`));
+    http.listen(port, () => console.log(`Server is listening on ${port}`));
+    // Setup socketio
+    io.on('connection', function (socket) {
+      console.log('a user connected');
+      socket.on('joinRoom', function (data) {
+        var room = data.room;
+        socket.join(room);
+      });
+      socket.on('leaveRoom', function (data) {
+        var room = data.room;
+        socket.leave(room);
+      });
+    });
   }).catch(err => {
     console.log(err.toString());
   });
