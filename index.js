@@ -131,7 +131,11 @@ app.get('/api/webhooks/user-followed-channel', function (req, res) {
 
 app.post('/api/webhooks/user-followed-channel', function(req, res){
   res.sendStatus(202);
-  console.log('got a webhook', req.body, req.query);
+  const notif = (req.body.data && req.body.data.length) ? req.body.data.pop() : null;
+  if(notif){
+    // then do something with it
+    console.log(notif);
+  } 
 });
 
 
