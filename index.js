@@ -20,6 +20,7 @@ const port = process.env.PORT || 4000;
 const app = express();
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 app.set('view engine', 'ejs');
 app.use('/static', express.static(__dirname + '/static'));
 
