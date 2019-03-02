@@ -124,7 +124,8 @@ app.post('/add-streamer', checkUserMiddleware, async (req, res) => {
 app.get('/api/webhooks/user-followed-channel', function (req, res) {
   console.log('in user followd api');
   console.log(req.query);
-  res.sendStatus(202);
+  // res.sendStatus(202);
+  return res.send(req.query['hub.challenge']);
 });
 
 
