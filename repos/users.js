@@ -136,3 +136,68 @@ module.exports.getChannelPosts = async (req, channelId) => {
     return [];
   }
 };
+
+module.exports.subscribeToChannelWebHooks = async (user, streamer) => {
+  const url = `https://api.twitch.tv/helix/webhooks/hub`; 
+  const params = {
+    "hub.callback": `${config.baseUrl}/api/webhooks/user-followed-channel`,
+    "hub.mode": "subscribe",
+    "hub.topic": `https://api.twitch.tv/helix/users/follows?first=1&to_id=${streamer.id}`,
+    "hub.lease_seconds": "864000"
+  };
+  const headers = {
+    "Authorization": `Bearer ${this.getBearerToken(req)}`,
+    "Client-ID": config.client_id
+  };
+  console.log(url, params, headers);
+  try {
+    const res = await axios.get(url, {
+      params: params,
+      headers: headers
+    });
+    return res.data;
+  } catch (err) {
+    console.log(err.toString());
+    return [];
+  }
+};
+
+module.exports.unsubscribeUserFollowedWebHook = async (streamerId) => {
+  const url = `https://api.twitch.tv/helix/webhooks/hub`;
+  const params = {
+    "hub.callback": `${config.baseUrl}/api/webhooks/user-followed-channel`,
+    "hub.mode": "unsubscribe",
+    "hub.topic": `https://api.twitch.tv/helix/users/follows?first=1&to_id=${streamerId}`,
+    "hub.lease_seconds": "864000"
+  };
+  const headers = {
+    "Authorization": `Bearer ${config.app_token}`,
+    "Client-ID": config.client_id
+  };
+  console.log(url, params, headers);
+  try {
+    const res = await axios.get(url, {
+      params: params,
+      headers: headers
+    });
+    return res.data;
+  } catch (err) {
+    console.log(err.toString());
+    return [];
+  }
+};
+
+module.exports.generateTwitchAppToken = async () => {
+  const url = `https://id.twitch.tv/oauth2/token`;
+  const data = {
+    client_id: config.client_id,
+    client_secret: config.client_secret,
+    grant_type: 'client_credentials',
+    scopes: `['chat:read']`
+  };
+  let queryString = `client_id=${config.client_id}&client_secret=${config.client_secret}&grant_type=client_credentials&scopes=['chat-read']`;
+  return axios.post(`${url}?${queryString}`, data).then(res => {
+    config.app_token = res.data.access_token;
+    return config.app_token;
+  });
+};

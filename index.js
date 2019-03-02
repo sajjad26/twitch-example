@@ -12,7 +12,10 @@ const {
   isLoggedIn,
   checkUserMiddleware,
   updateUserStreamer,
-  getChannelPosts
+  getChannelPosts,
+  subscribeToChannelWebHooks,
+  unsubscribeUserFollowedWebHook,
+  generateTwitchAppToken
 } = require('./repos/users');
 const database = require('./database');
 
@@ -106,9 +109,16 @@ app.post('/add-streamer', checkUserMiddleware, async (req, res) => {
   }
   try{
     const streamer = await getTwitchStreamer(streamerId);
+    const oldStreamerId = user.streamer_id;
     user.streamer = streamer.login;
     user.streamer_id = streamer.id;
     await user.save();
+    if(oldStreamerId){
+      // remove old webhook for streamer
+      await unsubscribeUserFollowedWebHook(oldStreamerId);
+    }
+    // now subscribe to this user events webhooks
+    const subscribed = await subscribeToChannelWebHooks(user, streamer);
     return res.json({
       data: user,
       status: 'success'
@@ -140,5 +150,9 @@ app.post('/api/webhooks/user-followed-channel', function(req, res){
 
 
 database.sync().then(() => {
-  app.listen(port, () => console.log(`Server is listening on ${port}`));
+  generateTwitchAppToken().then((token) => {
+    app.listen(port, () => console.log(`Server is listening on ${port}`));
+  }).catch(err => {
+    console.log(err.toString());
+  });
 });
