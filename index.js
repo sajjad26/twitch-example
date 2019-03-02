@@ -121,10 +121,9 @@ app.post('/api/webhooks/user-followed-channel', function(req, res){
   const notif = (req.body.data && req.body.data.length) ? req.body.data.pop() : null;
   if(notif){
     // then do something with it
-    console.log(notif);
     // emit this to clients subscribed
     const room = `channels/${notif.to_id}`;
-    io.broadcast.to(room).emit('userFollowed', {
+    io.to(room).emit('userFollowed', {
       data: notif
     });
   } 
