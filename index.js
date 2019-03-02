@@ -128,6 +128,11 @@ app.get('/api/webhooks/user-followed-channel', function (req, res) {
   return res.send(req.query['hub.challenge']);
 });
 
+app.post('/api/webhooks/user-followed-channel', function(req, res){
+  res.sendStatus(202);
+  console.log('got a webhook', req.body);
+});
+
 
 database.sync().then(() => {
   app.listen(port, () => console.log(`Server is listening on ${port}`));
