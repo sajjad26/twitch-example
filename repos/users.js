@@ -149,8 +149,7 @@ module.exports.subscribeToChannelWebHooks = async (streamer) => {
   };
   console.log('subscribe wehook');
   try {
-    const res = await axios.get(url, {
-      params: params,
+    const res = await axios.post(url, params, {
       headers: headers
     });
     return res.data;
@@ -173,8 +172,7 @@ module.exports.unsubscribeUserFollowedWebHook = async (streamerId) => {
   };
   console.log('unsubscribe webhook');
   try {
-    const res = await axios.get(url, {
-      params: params,
+    const res = await axios.post(url, params, {
       headers: headers
     });
     return res.data;
