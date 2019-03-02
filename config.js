@@ -6,7 +6,7 @@ const config = {
   base_url: baseUrl,
   redirect_uri: `${process.env.REDIRECT_URI || baseUrl}/authorize`,
   grant_type: 'authorization_code',
-  secret: 'som^eran$d^omstr%ingse@cretsh_ou=ldgohe0re'
+  secret: 'somerandomstringsecretshouldgohere'
 };
 
 module.exports = config;
