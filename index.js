@@ -118,7 +118,7 @@ app.post('/add-streamer', checkUserMiddleware, async (req, res) => {
       await unsubscribeUserFollowedWebHook(oldStreamerId);
     }
     // now subscribe to this user events webhooks
-    const subscribed = await subscribeToChannelWebHooks(user, streamer);
+    const subscribed = await subscribeToChannelWebHooks(streamer);
     return res.json({
       data: user,
       status: 'success'

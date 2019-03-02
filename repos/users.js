@@ -137,7 +137,7 @@ module.exports.getChannelPosts = async (req, channelId) => {
   }
 };
 
-module.exports.subscribeToChannelWebHooks = async (user, streamer) => {
+module.exports.subscribeToChannelWebHooks = async (streamer) => {
   const url = `https://api.twitch.tv/helix/webhooks/hub`; 
   const params = {
     "hub.callback": `${config.baseUrl}/api/webhooks/user-followed-channel`,
@@ -146,7 +146,7 @@ module.exports.subscribeToChannelWebHooks = async (user, streamer) => {
     "hub.lease_seconds": "864000"
   };
   const headers = {
-    "Authorization": `Bearer ${this.getBearerToken(req)}`,
+    "Authorization": `Bearer ${config.app_token}`,
     "Client-ID": config.client_id
   };
   console.log(url, params, headers);
