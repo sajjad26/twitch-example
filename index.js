@@ -120,6 +120,12 @@ app.post('/add-streamer', checkUserMiddleware, async (req, res) => {
   }
 });
 
+/** Web Hooks Verify */
+app.get('/api/webhooks/user-followed-channel', function (req, res) {
+  console.log(req.body);
+});
+
+
 database.sync().then(() => {
   app.listen(port, () => console.log(`Server is listening on ${port}`));
 });
