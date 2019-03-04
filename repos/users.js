@@ -76,10 +76,14 @@ module.exports.getTwitchStreamer = async (id) => {
 }
 
 module.exports.getUser = async (access_token) => {
-  let dbUser = await User.findOne({
-    where: { access_token: access_token }
-  });
-  return dbUser;
+  try{
+    let dbUser = await User.findOne({
+      where: { access_token: access_token }
+    });
+    return dbUser;
+  }catch(err){
+    return null;
+  }
 }
 
 module.exports.getAllUsers = async () => {
@@ -97,17 +101,19 @@ module.exports.isLoggedIn = (req) => {
 
 module.exports.checkUserMiddleware = async (req, res, next) => {
   const access_token = this.getAccessToken(req);
+  if(!access_token){
+    return res.redirect('/');
+  }
   if(access_token){
     try{
       const user = await this.getUser(access_token);
       res.locals.user = user;
       res.locals.access_token = access_token;
-      return next();
+      next();
     }catch(err){
       res.redirect('/');
     }
   }
-  res.redirect('/');
 };
 
 module.exports.updateUserStreamer = async (user, streamer) => {
