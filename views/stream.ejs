@@ -1,27 +1,31 @@
 <% include ./layout/header %>
 <div class="container">
   <div class="mt-4">
-    <h3>Stream Page</h3>
     <% if (!user) { %>
       <div class="alert alert-primary">You have not added your favourite streamer Yet. Click <a href="/add-streamer">here</a> to add now</div>
     <% } else {  %>
       <div class="row">
-        <div class="col">
-          <!--<iframe 
+        <div class="col col-6">
+          <h3>Stream Page</h3>
+          <iframe 
           src="https://player.twitch.tv/?channel=<%= user.streamer %>&autoplay=false" 
           frameborder="0" 
           allowfullscreen="true" 
           scrolling="no"
           height="378" 
-          width="620"></iframe>-->
+          width="100%"></iframe>
           <div class="channel-events">
             <h3>Channel Events</h3>
             <div class="events">
             </div>
           </div>
         </div>
-        <div class="col">
-          I will show chat for this channel
+        <div class="col col-6">
+          <div class="channel-chat">
+            <h3>Chat</h3>
+            <div class="messages">
+            </div>
+          </div>
         </div>
       </div>
     <% } %>
@@ -46,15 +50,56 @@
   }
   $(document).ready(function(){
     // setup sockets
-    var socket = io();
+    var eventsSocket = io();
     var room = 'channels/<%= user.streamer_id %>';
-    emitEvent(socket, 'joinRoom', {
+    emitEvent(eventsSocket, 'joinRoom', {
       room: room
     });
-    onReceiveEvent(socket, 'userFollowed', function(data){
+    onReceiveEvent(eventsSocket, 'userFollowed', function(data){
       $('.channel-events .events').prepend('<div class="event"><a href="https://www.twitch.tv/'+ data.data.from_name +'">' + data.data.from_name + '</a> Followed <a href="https://www.twitch.tv/'+ data.data.to_name +'">' + data.data.to_name + '</a></div>');
       $('.events .event:gt(9)').remove();
     }, room);
+    /* Setup Chat */
+    var wsUrl = 'wss://irc-ws.chat.twitch.tv:443';
+    var chatSocket = new WebSocket(wsUrl);
+    var openSocket = function(){
+      // now authenticate
+      chatSocket.send('PASS oauth:<%= access_token %>');
+      chatSocket.send('NICK <%= user.name %>');
+      chatSocket.send('JOIN #<%= user.streamer %>');
+    }
+    chatSocket.onopen = function(evt) { 
+      openSocket();
+    };
+    chatSocket.onclose = function(evt) { 
+      openSocket();
+    };
+    chatSocket.onmessage = function(evt) { 
+      // console.log(evt);
+      var $messages = $('.messages');
+      $messages.append('<div class="chat-message">'+ evt.data +'</div>');
+      $messages.scrollTop($messages.prop("scrollHeight"));
+      var total = $messages.find('.chat-message').length;
+      if(total > 50){
+        $messages.find('.chat-message:eq(0)').remove();
+      }
+    };
+    chatSocket.onerror = function(evt) { 
+      console.log(evt);
+    };
+    setTimeout(function(){
+      chatSocket.send('PING');
+    }, 10000);
   });
 </script>
+<style>
+  .channel-chat .messages{
+    max-height: 400px;
+    overflow-y: auto;
+  }
+  .channel-chat .messages .chat-message{
+    padding: 4px;
+    border-bottom: solid 1px #eeeeee;
+  }
+</style>
 <% include ./layout/footer %>
