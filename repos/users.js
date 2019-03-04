@@ -102,12 +102,12 @@ module.exports.checkUserMiddleware = async (req, res, next) => {
       const user = await this.getUser(access_token);
       res.locals.user = user;
       res.locals.access_token = access_token;
-      next();
+      return next();
     }catch(err){
-      return res.redirect('/');
+      res.redirect('/');
     }
   }
-  return res.redirect('/');
+  res.redirect('/');
 };
 
 module.exports.updateUserStreamer = async (user, streamer) => {

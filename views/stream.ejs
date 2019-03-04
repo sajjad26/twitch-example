@@ -14,11 +14,6 @@
           scrolling="no"
           height="378" 
           width="100%"></iframe>
-          <div class="channel-events">
-            <h3>Channel Events</h3>
-            <div class="events">
-            </div>
-          </div>
         </div>
         <div class="col col-6">
           <div class="channel-chat">
@@ -28,11 +23,19 @@
           </div>
         </div>
       </div>
+      <div class="channel-events">
+        <h3>Channel Events</h3>
+        <div class="events">
+        </div>
+      </div>
     <% } %>
   </div>
 </div>
 <% include ./layout/scripts %>
 <script>
+  var streamer_id = '<%= user.streamer_id %>';
+  var channel = '<%= user.streamer %>';
+  // channel = 'sajjadprof';
   var emitEvent = function (socket, eventName, data = {}, room = null) {
     if (room) {
       return socket.emit(eventName, data, room);
@@ -51,7 +54,7 @@
   $(document).ready(function(){
     // setup sockets
     var eventsSocket = io();
-    var room = 'channels/<%= user.streamer_id %>';
+    var room = 'channels/' + streamer_id;
     emitEvent(eventsSocket, 'joinRoom', {
       room: room
     });
@@ -66,7 +69,7 @@
       // now authenticate
       chatSocket.send('PASS oauth:<%= access_token %>');
       chatSocket.send('NICK <%= user.name %>');
-      chatSocket.send('JOIN #<%= user.streamer %>');
+      chatSocket.send('JOIN #' + channel);
     }
     chatSocket.onopen = function(evt) { 
       openSocket();
@@ -101,9 +104,12 @@
     overflow-y: auto;
   }
   .channel-chat .messages{
-    height: 350px;
+    height: 378px;
     overflow-y: auto;
+    overflow-x: none;
     border: solid 1px #cccccc;
+    padding: 2px;
+    font-size: 0.9em;
   }
   .channel-chat .messages .chat-message{
     padding: 4px;

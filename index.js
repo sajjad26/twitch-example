@@ -20,7 +20,8 @@ const {
   getChannelPosts,
   subscribeToChannelWebHooks,
   unsubscribeUserFollowedWebHook,
-  generateTwitchAppToken
+  generateTwitchAppToken,
+  getAccessToken
 } = require('./repos/users');
 const database = require('./database');
 
@@ -34,10 +35,12 @@ app.use(express.static(__dirname + '/static'));
 // const sockets = [];
 
 app.get('/', async (req, res) => {
-  const users = await getAllUsers();
+  const access_token = getAccessToken(req);
+  if(access_token){
+    return res.redirect('/stream');
+  }
   const data = {
     user: null,
-    users: users,
     moment: moment,
     redirectUrl: config.redirect_uri,
     clientId: config.client_id,
@@ -58,6 +61,11 @@ app.get('/authorize', async (req, res) => {
   }catch(err){
     return res.json(err);
   }
+});
+
+app.get('/auth/logout', (req, res) => {
+  res.clearCookie('access_token');
+  return res.redirect('/');
 });
 
 app.get('/stream', checkUserMiddleware, async (req, res) => {
