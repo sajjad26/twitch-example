@@ -13,7 +13,7 @@ const {
   loginTwitchUser, 
   getTwitchUser, 
   getTwitchStreamer, 
-  getAllUsers, 
+  getUser, 
   isLoggedIn,
   checkUserMiddleware,
   updateUserStreamer,
@@ -37,7 +37,12 @@ app.use(express.static(__dirname + '/static'));
 app.get('/', async (req, res) => {
   const access_token = getAccessToken(req);
   if(access_token){
-    return res.redirect('/stream');
+    try{
+      const user = await getUser(access_token);
+      return res.redirect('/stream');
+    }catch(err){
+      // do nothing
+    }
   }
   const data = {
     user: null,
