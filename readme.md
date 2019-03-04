@@ -7,7 +7,7 @@ This is by no means production ready for following reasons.
 
 # How would you deploy the above on AWS? (ideally a rough architecture diagram will help)
 
-![architecture diagram](https://github.com/sajjad26/twitch-example/twitch-example.jpg "Architecture Diagram")
+![architecture diagram](https://github.com/sajjad26/twitch-example/raw/master/twitch-example.jpg "Architecture Diagram")
 
 As indicated in the diagram above I would host two separate applications. 
 1. First is the normal Node App which serves web pages and is responsible for other
