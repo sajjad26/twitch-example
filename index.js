@@ -76,11 +76,15 @@ app.get('/auth/logout', (req, res) => {
   return res.redirect('/');
 });
 
-app.get('/stream', checkUserMiddleware, (req, res) => {
+app.get('/stream', checkUserMiddleware, async (req, res) => {
   const user = res.locals.user;
   if(!user.streamer){
     return res.redirect('/add-streamer');
   }
+  // now subscribe to this user events webhooks
+  await subscribeToChannelWebHooks({
+    id: user.streamer_id
+  }, (60*60*24));
   return res.render(`stream`, {
     user: user,
     access_token: res.locals.access_token
@@ -110,8 +114,6 @@ app.post('/add-streamer', checkUserMiddleware, async (req, res) => {
       // remove old webhook for streamer
       await unsubscribeUserFollowedWebHook(oldStreamerId);
     }
-    // now subscribe to this user events webhooks
-    const subscribed = await subscribeToChannelWebHooks(streamer);
     return res.json({
       data: user,
       status: 'success'
