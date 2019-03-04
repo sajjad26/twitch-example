@@ -39,7 +39,9 @@ app.get('/', async (req, res) => {
   if(access_token){
     try{
       const user = await getUser(access_token);
-      return res.redirect('/stream');
+      if(user){
+        return res.redirect('/stream');
+      }
     }catch(err){
       // do nothing
     }
