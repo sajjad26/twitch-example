@@ -107,11 +107,14 @@ module.exports.checkUserMiddleware = async (req, res, next) => {
   if(access_token){
     try{
       const user = await this.getUser(access_token);
+      if(!user){
+        return res.redirect('/');
+      }
       res.locals.user = user;
       res.locals.access_token = access_token;
-      next();
+      return next();
     }catch(err){
-      res.redirect('/');
+      return res.redirect('/');
     }
   }
 };
