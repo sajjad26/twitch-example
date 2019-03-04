@@ -97,11 +97,19 @@
 </script>
 <style>
   .channel-events{
+    padding: 10px;
   }
   .channel-events .events{
     border: solid 1px #cccccc;
     height: 378px;
     overflow-y: auto;
+  }
+  .channel-events .events .event{
+    padding: 4px;
+    border-bottom: solid 1px #eee;
+  }
+  .channel-events .events .event:last-child{
+    border-bottom: none;
   }
   .channel-chat .messages{
     height: 378px;
@@ -114,6 +122,9 @@
   .channel-chat .messages .chat-message{
     padding: 4px;
     border-bottom: solid 1px #eeeeee;
+  }
+  .channel-chat .messages .chat-message:last-child{
+    border-bottom: none;
   }
 </style>
 <% include ./layout/footer %>
