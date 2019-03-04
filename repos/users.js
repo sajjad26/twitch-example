@@ -124,19 +124,19 @@ module.exports.updateUserStreamer = async (user, streamer) => {
   return user.update();
 };
 
-module.exports.subscribeToChannelWebHooks = async (streamer) => {
+module.exports.subscribeToChannelWebHooks = async (streamer, seconds = 864000) => {
   const url = `https://api.twitch.tv/helix/webhooks/hub`; 
   const params = {
     "hub.callback": `${config.base_url}/api/webhooks/user-followed-channel`,
     "hub.mode": "subscribe",
     "hub.topic": `https://api.twitch.tv/helix/users/follows?first=1&to_id=${streamer.id}`,
-    "hub.lease_seconds": "864000"
+    "hub.lease_seconds": seconds
   };
   const headers = {
     "Authorization": `Bearer ${config.app_token}`,
     "Client-ID": config.client_id
   };
-  console.log('subscribe wehook');
+  // console.log('subscribe wehook');
   try {
     const res = await axios.post(url, params, {
       headers: headers
