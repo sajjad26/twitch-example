@@ -68,7 +68,7 @@ app.get('/auth/logout', (req, res) => {
   return res.redirect('/');
 });
 
-app.get('/stream', checkUserMiddleware, async (req, res) => {
+app.get('/stream', checkUserMiddleware, (req, res) => {
   const user = res.locals.user;
   if(!user.streamer){
     return res.redirect('/add-streamer');
@@ -79,7 +79,7 @@ app.get('/stream', checkUserMiddleware, async (req, res) => {
   });
 });
 
-app.get('/add-streamer', checkUserMiddleware, async (req, res) => {
+app.get('/add-streamer', checkUserMiddleware, (req, res) => {
   const user = res.locals.user;
   return res.render('addStreamer', {
     user: user
