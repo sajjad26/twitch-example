@@ -95,25 +95,18 @@ module.exports.isLoggedIn = (req) => {
   return this.getAccessToken(req) ? true : false;
 }
 
-module.exports.checkUserMiddleware = async (req, res, next) => {
+module.exports.checkUserMiddleware = (req, res, next) => {
   const access_token = this.getAccessToken(req);
   if(access_token){
-    try{
-      const user = await this.getUser(access_token);
+    this.getUser(access_token).then(user => {
       res.locals.user = user;
       res.locals.access_token = access_token;
-      return next();
-    }catch(err){
-      return res.json({
-        status: 'unauthorized',
-        message: err.toString()
-      });
-    }
+      next();
+    }).catch(err => {
+      return res.redirect('/');
+    });
   }
-  return res.json({
-    status: 'unauthorized',
-    message: 'You are unauthorized'
-  });
+  return res.redirect('/');
 };
 
 module.exports.updateUserStreamer = async (user, streamer) => {
