@@ -95,16 +95,17 @@ module.exports.isLoggedIn = (req) => {
   return this.getAccessToken(req) ? true : false;
 }
 
-module.exports.checkUserMiddleware = (req, res, next) => {
+module.exports.checkUserMiddleware = async (req, res, next) => {
   const access_token = this.getAccessToken(req);
   if(access_token){
-    this.getUser(access_token).then(user => {
+    try{
+      const user = await this.getUser(access_token);
       res.locals.user = user;
       res.locals.access_token = access_token;
       next();
-    }).catch(err => {
+    }catch(err){
       return res.redirect('/');
-    });
+    }
   }
   return res.redirect('/');
 };
@@ -112,27 +113,6 @@ module.exports.checkUserMiddleware = (req, res, next) => {
 module.exports.updateUserStreamer = async (user, streamer) => {
   user.streamer = streamer;
   return user.update();
-};
-
-module.exports.getChannelPosts = async (req, channelId) => {
-  const url = `https://api.twitch.tv/kraken/feed/${channelId}/posts`;
-  const params = {
-    limit: 10
-  };
-  const headers = {
-    "Authorization": `Bearer ${config.app_token}`,
-    "Client-ID": config.client_id,
-    "Accept": "application/vnd.twitchtv.v5+json"
-  };
-  try{
-    const res = await axios.get(url, {
-      params: params,
-      headers: headers
-    });
-    return res.data;
-  }catch(err){
-    console.log(err.toString(), err.response.data);
-  }
 };
 
 module.exports.subscribeToChannelWebHooks = async (streamer) => {
